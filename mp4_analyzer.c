@@ -46,6 +46,44 @@ void generate_indept_str(char* buffer, int indent)
     buffer[indent*4] ='\0';
 }
 
+int isfourcc(unsigned char* fourcc)
+{
+    int i;
+    for(i=0;i<4;i++)
+    {
+        if(isalpha(fourcc[i]) || isdigit(fourcc[i]))
+            continue;
+        return 0;
+    }
+
+    return 1;
+}
+
+int guess_box(FILE* fp, int size)
+{
+    /* guess atom */
+    unsigned char tmp[5];
+    unsigned int guess_size;
+
+    if(fread(tmp, 4, 1, fp) <= 0)
+        return 0;
+    guess_size = tmp[0];
+    guess_size = (guess_size<<8) | tmp[1];
+    guess_size = (guess_size<<8) | tmp[2];
+    guess_size = (guess_size<<8) | tmp[3];
+
+    if(fread(tmp, 4, 1, fp) <= 0)
+        return 0;
+    tmp[4] = 0;
+
+    fseek(fp, -8, SEEK_CUR);
+
+    if(guess_size < size && isfourcc(tmp))
+        return 1;
+    else
+        return 0;
+}
+
 void parse_box(FILE* fp, int indent, unsigned int end_position)
 {
     while(!feof(fp))
@@ -101,8 +139,14 @@ void parse_box(FILE* fp, int indent, unsigned int end_position)
             print_uuid(uuid);
             fseek(fp, size-8-16, SEEK_CUR);
         }
+        else if(guess_box(fp, size))
+        {
+            parse_box(fp, indent+1, start_offset + size);
+        }
         else
+        {
             fseek(fp, size-8, SEEK_CUR);
+        }
     }
 }
 
