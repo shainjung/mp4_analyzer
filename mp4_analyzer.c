@@ -40,6 +40,12 @@ void print_uuid(unsigned char* uuid)
     printf("\n");
 }
 
+void generate_indept_str(char* buffer, int indent)
+{
+    memset(buffer, ' ', indent*4);
+    buffer[indent*4] ='\0';
+}
+
 void parse_box(FILE* fp, int indent, unsigned int end_position)
 {
     while(!feof(fp))
@@ -69,9 +75,10 @@ void parse_box(FILE* fp, int indent, unsigned int end_position)
             return;
         tmp[4] = 0;
 
-        for(i=0;i<indent;i++)
-            indent_str[i] = '\t';
-        indent_str[i] = 0;
+        /* indent */
+        generate_indept_str(indent_str, indent);
+
+        /* print ATOM */
         printf("%stype:%s\n", indent_str, tmp);
         printf("%ssize:%d\n", indent_str, size);
         printf("%sstart_offset:0x%x\n", indent_str, start_offset);
