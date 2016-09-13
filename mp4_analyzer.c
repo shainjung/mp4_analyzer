@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 void print_uuid(unsigned char* uuid)
 {
@@ -59,7 +60,7 @@ int isfourcc(unsigned char* fourcc)
     return 1;
 }
 
-int guess_box(FILE* fp, int size)
+int guess_box(FILE* fp, unsigned int size)
 {
     /* guess atom */
     unsigned char tmp[5];
@@ -92,7 +93,6 @@ void parse_box(FILE* fp, int indent, unsigned int end_position)
         unsigned int size;
         unsigned char tmp[5];
         char indent_str[256];
-        int i;
 
         /* get start offset */
         start_offset = ftell(fp);
