@@ -1,4 +1,4 @@
-// mp4_analyze.cpp : 定義主控台應用程式的進入點。
+// mp4_analyze.cpp : print ATOMs in MP4 file.
 //
 
 #include <stdio.h>
@@ -63,7 +63,8 @@ void parse_box(FILE* fp, int indent, unsigned int end_position)
         size = (size<<8) | tmp[3];
 
         /* read fourcc */
-        fread(tmp, 1, 4, fp);
+        if(fread(tmp, 1, 4, fp) <= 0)
+            return;
         tmp[4] = 0;
 
         char indent_str[256];
@@ -87,7 +88,8 @@ void parse_box(FILE* fp, int indent, unsigned int end_position)
         else if(strcmp((const char*)tmp, "uuid") == 0)
         {
             unsigned char uuid[16];
-            fread(uuid, 16, 1, fp);
+            if(fread(uuid, 16, 1, fp) <= 0)
+                return;
             printf("%suuid:", indent_str);
             print_uuid(uuid);
             fseek(fp, size-8-16, SEEK_CUR);
