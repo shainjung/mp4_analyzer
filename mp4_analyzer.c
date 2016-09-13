@@ -47,6 +47,8 @@ void parse_box(FILE* fp, int indent, unsigned int end_position)
         unsigned int start_offset;
         unsigned int size;
         unsigned char tmp[5];
+        char indent_str[256];
+        int i;
 
         /* get start offset */
         start_offset = ftell(fp);
@@ -67,8 +69,6 @@ void parse_box(FILE* fp, int indent, unsigned int end_position)
             return;
         tmp[4] = 0;
 
-        char indent_str[256];
-        int i;
         for(i=0;i<indent;i++)
             indent_str[i] = '\t';
         indent_str[i] = 0;
@@ -101,13 +101,14 @@ void parse_box(FILE* fp, int indent, unsigned int end_position)
 
 int main(int argc, char* argv[])
 {
+    FILE* fp;
     if(argc < 2)
     {
         printf("Usage: mp4_analyzer <mp4 file>\n");
         return 0;
     }
 
-    FILE* fp = fopen(argv[1], "rb");
+    fp = fopen(argv[1], "rb");
     if(fp == NULL)
     {
         printf("Open file %s failed\n", argv[1]);
