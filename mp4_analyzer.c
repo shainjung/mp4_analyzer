@@ -130,6 +130,11 @@ void parse_box(FILE* fp, int indent, unsigned int end_position)
             parse_box(fp, indent+1, start_offset + size);
         else if(strcmp((const char*)tmp, "minf") == 0)
             parse_box(fp, indent+1, start_offset + size);
+        else if(strcmp((const char*)tmp, "stsd") == 0)
+        {
+            fseek(fp, 8, SEEK_CUR);
+            parse_box(fp, indent+1, start_offset + size);
+        }
         else if(strcmp((const char*)tmp, "uuid") == 0)
         {
             unsigned char uuid[16];
